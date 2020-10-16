@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  web:
+    build:
+      dockerfile: docker/nginx/Dockerfile
+      context: .
+    volumes:
+      - .:/var/www/app/public:cached
+    ports:
+      - 80:80
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        UID: ${DUID}
+        GID: ${DGID}
+    volumes:
+      - .:/var/www/app:cached
+
+  redis:
+    image: redis:latest
+
+  postgres:
+    image: postgres:11-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: webmaster
+      POSTGRES_USER: webmaster
+      POSTGRES_DB: bookmarks
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+volumes:
+  database:
+    driver: 'local'

@@ -1,0 +1,45 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name bookmarks.localhost;
+
+    root /var/www/app/public;
+    client_max_body_size 5M;
+
+    location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location ~* ^.+\.(svg|svgz|eot|otf|woff|woff2|ttf|ttc|rss|atom|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|wav|bmp|rtf)$ {
+        access_log off;
+        expires max;
+        add_header Access-Control-Allow-Origin "*";
+    }
+
+    location ~* ^.+\.(css|js)$ {
+        access_log off;
+        log_not_found off;
+        expires max;
+        add_header Access-Control-Allow-Origin "*";
+    }
+
+    location ~ ^/index\.php(/|$) {
+        fastcgi_pass app:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_send_timeout 300s;
+        fastcgi_read_timeout 60s;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+        http2_push_preload on;
+        proxy_buffer_size          2048k;
+        proxy_buffers              4 2048k;
+        proxy_busy_buffers_size    4096k;
+        fastcgi_buffers            16 256k;
+        fastcgi_buffer_size        512k;
+    }
+
+    location ~ \.php$ {
+        return 404;
+    }
+}
