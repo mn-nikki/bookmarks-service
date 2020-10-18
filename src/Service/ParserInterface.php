@@ -35,4 +35,10 @@ interface ParserInterface
      *                Возвращает src favicon в формате base64
      */
     public function getFavicon(string $url): ?string;
+
+    /**
+     * @param string $url
+     * @return object|null
+     */
+    public function validateUrl(string $url): ?array;
 }

@@ -78,9 +78,11 @@ class BookmarksManager implements BookmarksManagerInterface
         $bookmark = $bookmark ?? new Bookmark();
         $bookmark->setUrl($url);
 
-        $output = \file_get_contents($url);
+        $output = @\file_get_contents($url);
         $document = new DOMDocument();
-        @$document->loadHTML($output);
+        if (false !== $output) {
+            @$document->loadHTML($output);
+        }
 
         $bookmark->setDateAdd(new \DateTime());
         $bookmark->setFavicon($this->parser->getFavicon($url));
@@ -157,5 +159,13 @@ class BookmarksManager implements BookmarksManagerInterface
         } catch (\Exception $e) {
             throw new RuntimeException($e->getMessage(), (int) $e->getCode(), $e);
         }
+    }
+
+    /**
+     * @return ParserInterface
+     */
+    public function getParser(): ParserInterface
+    {
+        return $this->parser;
     }
 }

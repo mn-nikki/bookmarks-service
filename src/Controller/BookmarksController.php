@@ -7,7 +7,6 @@ namespace App\Controller;
 use App\Entity\Bookmark;
 use App\Form\BookmarkType;
 use App\Service\BookmarksManagerInterface;
-use App\Service\UrlValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,17 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class BookmarksController extends AbstractController
 {
     private BookmarksManagerInterface $bookmarksManager;
-    private UrlValidatorInterface $urlValidator;
 
     /**
      * BookmarksController constructor.
      * @param BookmarksManagerInterface $bookmarksManager
-     * @param UrlValidatorInterface $urlValidator
      */
-    public function __construct(BookmarksManagerInterface $bookmarksManager, UrlValidatorInterface $urlValidator)
+    public function __construct(BookmarksManagerInterface $bookmarksManager)
     {
         $this->bookmarksManager = $bookmarksManager;
-        $this->urlValidator = $urlValidator;
     }
 
     /**
@@ -81,7 +77,6 @@ class BookmarksController extends AbstractController
 
     /**
      * @Route(path="/bookmarks/new", name="bookmark_create")
-     *
      * @param Request $request
      * @return Response
      */
@@ -94,13 +89,14 @@ class BookmarksController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $bookmark = $form->getData();
             $url = $bookmark->getUrl();
-            $errors = $this->urlValidator->validateUrl($url);
 
+            $errors = $this->bookmarksManager->getParser()->validateUrl($url);
             $hasUrl = !empty($this->bookmarksManager->getRepository()->findBy(['url' => $url]));
 
             if ($hasUrl) {
                 $errors['hasUrl'] = \sprintf('Url with address \'%s\' already exists', $url);
             }
+
             if (null !== $errors) {
                 return $this->render('form/new.html.twig', [
                     'form' => $form->createView(),

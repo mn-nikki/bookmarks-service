@@ -3,9 +3,22 @@
 namespace App\Service;
 
 use DOMDocument;
+use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Parser implements ParserInterface
 {
+    private ValidatorInterface $validator;
+
+    /**
+     * UrlValidator constructor.
+     * @param ValidatorInterface $validator
+     */
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -77,18 +90,15 @@ class Parser implements ParserInterface
     private function parseFaviconFromApi(string $url): ?string
     {
         $iconUrl = "https://www.google.com/s2/favicons?domain={$url}";
-        if (!$this->checkAvailability($iconUrl)) {
+        $errors = $this->validateUrl($iconUrl);
+
+        if (null !== $errors) {
             $iconUrl = null;
         }
 
         return $iconUrl;
     }
 
-    /**
-     * @param string $url
-     * @param DOMDocument $document
-     * @return string|null
-     */
     private function parseFavicon(string $url, DOMDocument $document): ?string
     {
         $iconsData = [];
@@ -111,7 +121,9 @@ class Parser implements ParserInterface
             $iconUrl = $iconsData['shortcut_icon'];
         }
 
-        if (!$this->checkAvailability($iconUrl)) {
+        $errors = $this->validateUrl($iconUrl);
+
+        if (null !== $errors) {
             $iconUrl = $this->parseFaviconFromApi($url);
         }
 
@@ -119,17 +131,26 @@ class Parser implements ParserInterface
     }
 
     /**
-     * @param ?string $url
-     * @return bool
+     * {@inheritdoc}
      */
-    private function checkAvailability(?string $url): bool
+    public function validateUrl(string $url): ?array
     {
-        $access = false;
+        $errors = null;
+        $violations = $this->validator->validate($url, new Url());
 
-        if (null !== $url && false !== filter_var($url, FILTER_VALIDATE_URL) && false !== file_get_contents($url)) {
-            $access = true;
+        if (!empty($violations)) {
+            foreach ($violations as $key => $violation) {
+                $errors['messageTemplate'] = $violation->getMessageTemplate();
+                $errors['invalidValue'] = $violation->getInvalidValue();
+            }
+        }
+        if (null !== $url && false !== filter_var($url, FILTER_VALIDATE_URL) && false !== @file_get_contents($url)) {
+            $headers = \get_headers($url);
+            if (false === \strpos($headers[0], '200')) {
+                $errors['hasUrl'] = \sprintf('Url with address \'%s\' already exists', $url);
+            }
         }
 
-        return $access;
+        return $errors ?? null;
     }
 }
