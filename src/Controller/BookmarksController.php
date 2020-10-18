@@ -21,10 +21,12 @@ class BookmarksController extends AbstractController
     /**
      * BookmarksController constructor.
      * @param BookmarksManagerInterface $bookmarksManager
+     * @param UrlValidatorInterface $urlValidator
      */
-    public function __construct(BookmarksManagerInterface $bookmarksManager)
+    public function __construct(BookmarksManagerInterface $bookmarksManager, UrlValidatorInterface $urlValidator)
     {
         $this->bookmarksManager = $bookmarksManager;
+        $this->urlValidator = $urlValidator;
     }
 
     /**
@@ -79,11 +81,11 @@ class BookmarksController extends AbstractController
 
     /**
      * @Route(path="/bookmarks/new", name="bookmark_create")
+     *
      * @param Request $request
-     * @param UrlValidatorInterface $urlValidator
      * @return Response
      */
-    public function create(Request $request, UrlValidatorInterface $urlValidator): Response
+    public function create(Request $request): Response
     {
         $bookmark = new Bookmark();
         $form = $this->createForm(BookmarkType::class, $bookmark);
@@ -92,14 +94,13 @@ class BookmarksController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $bookmark = $form->getData();
             $url = $bookmark->getUrl();
-            $errors = $urlValidator->validateUrl($url);
+            $errors = $this->urlValidator->validateUrl($url);
 
             $hasUrl = !empty($this->bookmarksManager->getRepository()->findBy(['url' => $url]));
 
             if ($hasUrl) {
-                $errors->hasUrl = \sprintf('Url with address \'%s\' already exists', $url);
+                $errors['hasUrl'] = \sprintf('Url with address \'%s\' already exists', $url);
             }
-
             if (null !== $errors) {
                 return $this->render('form/new.html.twig', [
                     'form' => $form->createView(),

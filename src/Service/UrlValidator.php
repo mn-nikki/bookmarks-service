@@ -23,7 +23,7 @@ class UrlValidator implements UrlValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateUrl(string $url): ?object
+    public function validateUrl(string $url): ?array
     {
         $errors = null;
         $violations = $this->validator->validate($url, new Url());
@@ -35,6 +35,6 @@ class UrlValidator implements UrlValidatorInterface
             }
         }
 
-        return (object) $errors ?? null;
+        return $errors ?? null;
     }
 }

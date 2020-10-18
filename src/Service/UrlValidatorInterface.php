@@ -8,5 +8,5 @@ interface UrlValidatorInterface
      * @param string $url
      * @return object|null
      */
-    public function validateUrl(string $url): ?object;
+    public function validateUrl(string $url): ?array;
 }
