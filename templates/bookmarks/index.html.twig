@@ -38,4 +38,5 @@
             <li class="page-item"><a class="page-link" href="{{ path('bookmarks_list', {page: page+1 > maxPage ? page : page + 1, 'orderBy':orderBy, 'order':order}) }}">{{ 'paginate.next' | trans }}</a></li>
         </ul>
     {% endif %}
+    <a href="{{ path('download_xlsx') }}" class="btn btn-success mt-3">Выгрузить в Exel</a>
 {% endblock %}
