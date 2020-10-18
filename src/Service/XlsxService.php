@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-class XlsxService extends AbstractController
+class XlsxService extends AbstractController implements XlsxServiceInterface
 {
     private BookmarkRepository $bookmarkRepository;
 
