@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <style>
+        label {display: block;}
+    </style>
+    <h4 class="mt-3 mb-3">{{ 'form-new.title' | trans }}</h4>
+    {% if(errors is defined and errors != null) %}
+        {% if(errors.invalidValue is defined and errors.messageTemplate is defined) %}
+        <div class="alert alert-danger" role="alert">
+            You entered : {{ errors.invalidValue }}, {{ errors.messageTemplate }}
+        </div>
+        {% endif %}
+        {% if(errors.hasUrl is defined) %}
+        <div class="alert alert-danger" role="alert">
+            {{ errors.hasUrl }}
+        </div>
+        {% endif %}
+    {% endif %}
+    {{ include('form/_form.html.twig') }}
+    <p class="text-right mt-3"><a class="btn btn-link" href="{{ path('bookmarks_list') }}">{{ 'btn.back' | trans }}</a></p>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h4 class="mb-4">
+        {% if(bookmark.favicon != null) %}
+        <img src="{{ bookmark.favicon }}" width="16" height="16" alt="{{ bookmark.url }}"/>
+        {% endif %}
+        <span>{{ bookmark.url }}</span>
+    </h4>
+
+    <table class="table table-condensed table-striped">
+        <tr>
+            <td><b>{{ 'bookmark.dateAdd' | trans }}</b></td>
+            <td>{{ bookmark.dateAdd|date('F j, Y H:i') }}</td>
+        </tr>
+        <tr>
+            <td><b>{{ 'bookmark.pageTitle' | trans }}</b></td>
+            <td>{{ bookmark.pageTitle }}</td>
+        </tr>
+
+        {% if(bookmark.metaDescription != null) %}
+        <tr>
+            <td><b>{{ 'bookmark.metaDescription' | trans }}</b></td>
+            <td>{{ bookmark.metaDescription }}</td>
+        </tr>
+        {% endif %}
+
+        {% if(bookmark.metaKeywords != null) %}
+        <tr>
+            <td><b>{{ 'bookmark.metaKeywords' | trans }}</b></td>
+            <td>{{ bookmark.metaKeywords }}</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <p class="text-right mt-3">
+        <a class="btn btn-danger ml-3" href="{{ path('bookmark_remove', {'id': bookmark.id}) }}">{{ 'btn.delete' | trans }}</a>
+        <a class="btn btn-primary" href="{{ path('bookmarks_list') }}">{{ 'btn.back' | trans }}</a>
+    </p>
+{% endblock %}

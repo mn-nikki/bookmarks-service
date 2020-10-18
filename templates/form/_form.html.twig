@@ -1,0 +1,12 @@
+<div id="bookmark_form">
+    {{ form_errors(form) }}
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.url, {
+        label: 'form-new.url-label' | trans,
+    }) }}
+
+    <button class="btn btn-primary mt-3" type="submit">{{ 'btn.save' | trans }}</button>
+    {{ form_end(form) }}
+</div>

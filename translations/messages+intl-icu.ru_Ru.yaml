@@ -1,0 +1,34 @@
+bookmark:
+  title: 'Список закладок'
+  url: 'URL адрес'
+  pageTitle: 'Заголовок'
+  metaDescription: 'Описание'
+  metaKeywords: 'Ключевые слова'
+  dateAdd: 'Дата добавления'
+btn:
+  new: 'Добавить'
+  detail: 'Подробнее'
+  back: 'К списку'
+  delete: 'Удалить'
+  save: 'Сохранить'
+  main: 'На главную'
+paginate:
+  prev: 'Предыдущая'
+  next: 'Следущая'
+  page: 'Страница'
+  of: 'из'
+login:
+  title: 'Авторизация'
+  hello: 'Вы вошли как'
+  singin: 'Пожалуйста, войдете'
+  username: 'Имя пользователя'
+  password: 'Пароль'
+  submit: 'Вход'
+main:
+  title: 'Добро пожаловать'
+  list: 'Список закладок'
+  auth: 'Авторизация'
+  hello: 'Привет, это сервис закладок'
+form-new:
+  url-label: 'Введите URL адресс'
+  title: 'Добавить новую закладку'

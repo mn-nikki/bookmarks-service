@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -7,9 +9,8 @@ use App\Repository\BookmarkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ObjectRepository;
-use RuntimeException;
 use DOMDocument;
-use App\Service\ParserInterface;
+use RuntimeException;
 
 class BookmarksManager implements BookmarksManagerInterface
 {
@@ -34,20 +35,17 @@ class BookmarksManager implements BookmarksManagerInterface
         $this->parser = $parser;
     }
 
-    /**
-     * @return ObjectRepository
-     */
     public function getRepository(): ObjectRepository
     {
         return $this->repository;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function pager(int $page = 1, ?int $pageSize = null, ?string $orderBy = null, ?string $order = null): Paginator
     {
-        if ($orderBy === null) {
+        if (null === $orderBy) {
             $orderBy = self::DEFAULT_ORDER_PROPERTY;
         } elseif (!\array_key_exists($orderBy, \array_flip($this->getProperties()))) {
             throw new RuntimeException(\sprintf('Property \'%s\' not exists in \'%s\'', $orderBy, Bookmark::class));
@@ -64,9 +62,6 @@ class BookmarksManager implements BookmarksManagerInterface
         return new Paginator($q->getQuery());
     }
 
-    /**
-     * @return array
-     */
     private function getProperties(): array
     {
         $properties = (new \ReflectionClass(Bookmark::class))
@@ -76,18 +71,18 @@ class BookmarksManager implements BookmarksManagerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function getBookmarkPageData(string $url) : Bookmark
+    public function getBookmarkPageData(string $url, ?Bookmark $bookmark = null): Bookmark
     {
-        $bookmark = new Bookmark();
+        $bookmark = $bookmark ?? new Bookmark();
         $bookmark->setUrl($url);
 
         $output = \file_get_contents($url);
         $document = new DOMDocument();
         @$document->loadHTML($output);
 
-        $bookmark->setDateAdd(new \DateTime);
+        $bookmark->setDateAdd(new \DateTime());
         $bookmark->setFavicon($this->parser->getFavicon($url));
         $bookmark->setPageTitle($this->parser->getTitle($document));
         $bookmark->setMetaDescription($this->parser->getMetaDescription($document));
@@ -97,13 +92,13 @@ class BookmarksManager implements BookmarksManagerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function update(Bookmark $bookmark): Bookmark
     {
         $id = $bookmark->getId();
 
-        if ($id === null) {
+        if (null === $id) {
             throw new RuntimeException(\sprintf('Object with id = \'%s\', was not found', $id));
         }
         $this->flushToStorage($bookmark);
@@ -113,13 +108,13 @@ class BookmarksManager implements BookmarksManagerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function delete(Bookmark $bookmark): Bookmark
     {
         $id = $bookmark->getId();
 
-        if ($id === null) {
+        if (null === $id) {
             throw new RuntimeException(\sprintf('Object with id = \'%s\', was not found', $id));
         }
         $this->removeToStorage($bookmark);
@@ -128,15 +123,10 @@ class BookmarksManager implements BookmarksManagerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function store(Bookmark $bookmark): Bookmark
     {
-        $id = $bookmark->getId();
-
-        if ($id !== null) {
-            throw new RuntimeException(\sprintf('Object with id = \'%s\', already exists', $id));
-        }
         $this->flushToStorage($bookmark);
         $this->em->refresh($bookmark);
 
@@ -168,5 +158,4 @@ class BookmarksManager implements BookmarksManagerInterface
             throw new RuntimeException($e->getMessage(), (int) $e->getCode(), $e);
         }
     }
-
 }

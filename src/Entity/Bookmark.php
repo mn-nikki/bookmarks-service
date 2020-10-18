@@ -15,37 +15,37 @@ class Bookmark
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $dateAdd;
+    private ?\DateTimeInterface $dateAdd;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $favicon;
+    private ?string $favicon;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $url;
+    private ?string $url;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $pageTitle;
+    private ?string $pageTitle;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $metaDescription;
+    private ?string $metaDescription;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $metaKeywords;
+    private ?string $metaKeywords;
 
     public function getId(): ?int
     {

@@ -1,10 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BookmarksController!{% endblock %}
+{% block title %}Bookmarks List{% endblock %}
 
 {% block body %}
-    {% for bookmarks in data %}
-        {{ dump(bookmarks) }}
-    {% endfor %}
-
+    <h1>{{ 'bookmark.title' | trans }}</h1>
+    <div class="d-flex justify-content-between mt-3 mb-3">
+        <a class="btn btn-dark" href="{{ path('main') }}">{{ 'btn.main' | trans }}</a>
+        <a class="btn btn-success" href="{{ path('bookmark_create') }}">{{ 'btn.new' | trans }}</a>
+    </div>
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th><a href="{{ path('bookmarks_list',{'page': page, 'orderBy': 'url', 'order': order == 'asc' ? 'desc' : 'asc'}) }}">{{ 'bookmark.url' | trans }}</a></th>
+                <th><a href="{{ path('bookmarks_list',{'page': page, 'orderBy': 'pageTitle', 'order': order == 'asc' ? 'desc' : 'asc'}) }}">{{ 'bookmark.pageTitle' | trans }}</a></th>
+                <th><a href="{{ path('bookmarks_list',{'page': page, 'orderBy': 'dateAdd', 'order': order == 'asc' ? 'desc' : 'asc'}) }}">{{ 'bookmark.dateAdd' | trans }}</a></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for bookmarks in data %}
+            <tr>
+                <td>
+                    <img src="{{ bookmarks.favicon }}" width="16" height="16" alt="{{ bookmarks.url }}"/>
+                    <a href="{{ bookmarks.url }}" target="_blank">{{ bookmarks.url }}</a>
+                </td>
+                <td>{{ bookmarks.pageTitle }}</td>
+                <td>{{ bookmarks.dateAdd|date('F j, Y H:i') }}</td>
+                <td class="text-right"><a class="btn btn-link" href="{{ path('bookmark_view', { 'id': bookmarks.id }) }}">{{ 'btn.detail' | trans }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if(maxPage > 1) %}
+        <p>{{ 'paginate.page' | trans }} <b>{{ page }}</b> {{ 'paginate.of' | trans }} <b>{{ maxPage }}</b></p>
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="{{ path('bookmarks_list', {page: page-1 < 1 ? 1 : page - 1, 'orderBy':orderBy, 'order':order}) }}">{{ 'paginate.prev' | trans }}</a></li>
+            <li class="page-item"><a class="page-link" href="{{ path('bookmarks_list', {page: page+1 > maxPage ? page : page + 1, 'orderBy':orderBy, 'order':order}) }}">{{ 'paginate.next' | trans }}</a></li>
+        </ul>
+    {% endif %}
 {% endblock %}

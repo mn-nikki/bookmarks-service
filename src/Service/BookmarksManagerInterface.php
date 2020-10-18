@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -10,7 +12,7 @@ interface BookmarksManagerInterface
 {
     /**
      * @return ObjectRepository
-     * Возвращает репозиторий сущности Bookmark
+     *                          Возвращает репозиторий сущности Bookmark
      */
     public function getRepository(): ObjectRepository;
 
@@ -25,10 +27,11 @@ interface BookmarksManagerInterface
 
     /**
      * @param string $url
+     * @param Bookmark|null $bookmark
      * @return Bookmark
-     * Возвращает сущность Bookmark с favicon и мета-данными страницы
+     *                  Возвращает сущность Bookmark с favicon и мета-данными страницы
      */
-    public function getBookmarkPageData(string $url): Bookmark;
+    public function getBookmarkPageData(string $url, ?Bookmark $bookmark = null): Bookmark;
 
     /**
      * @param Bookmark $bookmark

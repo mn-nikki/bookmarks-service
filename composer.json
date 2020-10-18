@@ -4,6 +4,7 @@
   "require": {
     "php": ">=7.4",
     "ext-ctype": "*",
+    "ext-dom": "*",
     "ext-iconv": "*",
     "sensio/framework-extra-bundle": "^5.5",
     "symfony/cache": "5.1.*",
