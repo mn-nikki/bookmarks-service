@@ -42,7 +42,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         foreach ($this->urls as $url) {
-            $errors = $this->bookmarksManager->getParser()->urlValidate($url);
+            $errors = $this->bookmarksManager->getParser()->validateUrl($url);
             if (null !== $errors) {
                 continue;
             }
